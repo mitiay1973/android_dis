@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     Connection connection;
     String ConnectionResult="";
     ImageView image;
+    String Img;
     public final int[] i = {1};
 
     @Override
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         TextView BaseName = findViewById(R.id.BaseName);
         TextView GeographyPosition = findViewById(R.id.GeografPosition);
         TextView NumberOfParse = findViewById(R.id.NumberOfParts);
+        ImageView imageView = findViewById(R.id.image);
         try
         {
             ConectionHellper conectionHellper = new ConectionHellper();
@@ -125,10 +127,13 @@ public class MainActivity extends AppCompatActivity {
                     BaseName.setText(resultSet.getString(2));
                     GeographyPosition.setText(resultSet.getString(3));
                     NumberOfParse.setText(resultSet.getString(4));
+                    Img=(resultSet.getString(5));
                     image.setOnClickListener(v -> {
                         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        pickImg.launch(intent);        });
+                        pickImg.launch(intent);
+                        imageView.setImageBitmap(getImgBitmap(Img));
+                    });
                 }
             }
             else
@@ -158,18 +163,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     });
-    private Bitmap getImgBitmap(String encodedImg) {
-        if (encodedImg != null) {
-            byte[] bytes = new byte[0];
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                bytes = Base64.getDecoder().decode(encodedImg);
-            }
-            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-        }
-        return BitmapFactory.decodeResource(DeteilsMask.this.getResources(),
-                R.drawable.image);
-    }
-
     private String encodeImage(Bitmap bitmap) {
         int prevW = 150;
         int prevH = bitmap.getHeight() * prevW / bitmap.getWidth();
@@ -181,6 +174,16 @@ public class MainActivity extends AppCompatActivity {
             return Base64.getEncoder().encodeToString(bytes);
         }
         return "";
+    }
+    private Bitmap getImgBitmap(String encodedImg) {
+        if (encodedImg != null) {
+            byte[] bytes = new byte[0];
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                bytes = Base64.getDecoder().decode(encodedImg);
+            }
+            return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+        }
+        return BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_launcher_background);
     }
     }
 
